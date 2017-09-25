@@ -80,6 +80,7 @@ def add_trip(request, num):
 
 def added(request):
     errors = user.objects.trip_validator(request.POST)
+    print errors
     if len(errors):
         print errors
         for tag, error in errors.iteritems():

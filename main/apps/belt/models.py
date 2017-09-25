@@ -1,7 +1,8 @@
 from __future__ import unicode_literals
 import re
 from django.db import models
-import datetime
+from datetime import datetime, date
+import time
 
 
 emailRegex = re.compile(r'^[a-zA-Z0-9\.\+_-]+@[a-zA-Z0-9\._-]+\.[a-zA-Z]*$')
@@ -36,8 +37,14 @@ class userManager(models.Manager):
     def trip_validator(self, postData):
         errors = {}
         for input in postData:
+            print datetime.strptime(postData['start_date'], '%Y-%m-%d').date()
+            print time.strftime('%Y-%m-%d')
             if len(postData[input]) < 3:
                 errors['input'] = "Trip not applied, All fields are required"
+            elif datetime.strptime(postData['start_date'], '%Y-%m-%d').date() < datetime.today().date():
+                errors['input'] = "Trip not applied, must be a future date..."
+            elif datetime.strptime(postData['end_date'], '%Y-%m-%d').date() < datetime.strptime(postData['start_date'], '%Y-%m-%d').date():
+                errors['input'] = "Trip not applied, must be a later then start date..."
             return errors
 
 
