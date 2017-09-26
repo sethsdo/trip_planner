@@ -57,12 +57,13 @@ def signIn(request):
 def main(request):
     user_id = user.objects.get(username=request.session['current_user'])
     t1 = trip.users
-    user_trips = trip.objects.filter(users__id=user_id.id)
+    user_trips = trip.objects.filter(users__id=user_id.id)    
+    
     print user_trips
     context = {
         "user": user_id,
         "user_trips": user_trips,
-        "trips": trip.objects.all(),
+        "trips": trip.objects.exclude(users=user_id),
     }
     print user
     return render(request, 'belt_temp/main.html', context)
@@ -96,15 +97,16 @@ def added(request):
 
 def destination(request, num):
     # print trip.objects.filter(id=3)
-    # user_trips = trip.objects.filter(id=num)
+    # user_trips = trip.objects.filter(id=num) 
     # print user_trips.trips.all()
     user_id = user.objects.get(username=request.session['current_user'])
     add_new = trip.objects.get(id=num)
     all = trip.objects.filter(id=num)
     print add_new.creator.name
+    print add_new.users.exclude(name=add_new.creator.name)
     context = {
         "trips": trip.objects.filter(id=num),
-        "group": add_new.users.all(),
+        "group": add_new.users.exclude(name=add_new.creator.name),
         "leader": add_new.creator,
     }
     return render(request, "belt_temp/destination.html", context)
